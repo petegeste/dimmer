@@ -1,0 +1,136 @@
+﻿<Window x:Class="Dimmer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Dimmer"
+        mc:Ignorable="d"
+        Title="Dimmer" Height="450" Width="800">
+    <Grid Background="#F3F3F3">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1.8*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1.8*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Presets -->
+        <ListView ItemsSource="{Binding Presets, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedPreset, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Margin="25,25,0,25">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent">
+                        <TextBlock Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding EditingName}" Value="True">
+                                            <Setter Property="Visibility" Value="Hidden"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+
+                        <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" LostKeyboardFocus="TextBox_LostKeyboardFocus" HorizontalAlignment="Stretch">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox">
+                                    <Setter Property="Visibility" Value="Hidden"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding EditingName}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+
+                    </Grid>
+
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                    <EventSetter Event="MouseDoubleClick" Handler="Grid_MouseDoubleClick" />
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+        
+        <!-- Faders -->
+        <ItemsControl ItemsSource="{Binding Faders}" Grid.Row="0" Grid.Column="1" MinWidth="240" Margin="25,0" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="10,0" MinWidth="30" ClipToBounds="False">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="100"/>
+                            <RowDefinition Height="auto"/>
+                        </Grid.RowDefinitions>
+                        <Slider Grid.Row="0" Minimum="0" Value="{Binding Value, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Maximum="127" Orientation="Vertical" HorizontalAlignment="Center" Margin="5"/>
+                        <TextBox Grid.Row="1" Text="{Binding Name}">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox">
+                                    <Setter Property="MinWidth" Value="10"/>
+                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="BorderBrush" Value="Transparent"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                            <Setter Property="Background" Value="White"/>
+                                            <Setter Property="BorderBrush" Value="LightBlue"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="8" Rows="2">
+                        
+                    </UniformGrid>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+        
+        <!-- Parameters -->
+        <Border Background="#E3E3E3" Grid.Row="1" Grid.Column="1" Margin="25,0,25,25" CornerRadius="3">
+            <Grid Margin="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="auto"/>
+                    
+                </Grid.ColumnDefinitions>
+                
+                <!-- Button triad -->
+                <WrapPanel Grid.Row="0" Grid.Column="1">
+                    <Button Command="{Binding ButtonClick}" CommandParameter="Mute" Content="Mute" Padding="2.5" Margin="0,0,5,0"/>
+                    <Button Command="{Binding ButtonClick}" CommandParameter="Save" Content="Save" Padding="2.5" Margin="0,0,5,0"/>
+                    <Button Command="{Binding ButtonClick}" CommandParameter="Send" Content="Send" Padding="2.5"/>
+                </WrapPanel>
+
+                <!-- Add Remove -->
+                <StackPanel>
+                    <WrapPanel Grid.Row="0" Grid.Column="0">
+                        <Button Command="{Binding ButtonClick}" CommandParameter="Add" Content="Add Preset" Padding="2.5" Margin="0,0,5,0"/>
+                        <Button Command="{Binding ButtonClick}" CommandParameter="Delete" Content="Delete" Padding="2.5" Margin="0,0,5,0"/>
+                    </WrapPanel>
+                    <ComboBox ItemsSource="{Binding MidiPorts, UpdateSourceTrigger=PropertyChanged}"
+                              SelectedItem="{Binding SelectedMidiPort, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                              Width="110"
+                              DisplayMemberPath="Name"
+                              HorizontalAlignment="Left"
+                              Margin="0,5">
+                    </ComboBox>
+                </StackPanel>
+                
+
+            </Grid>
+        </Border>
+        
+        
+    </Grid>
+</Window>
